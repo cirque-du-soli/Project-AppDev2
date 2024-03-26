@@ -13,7 +13,7 @@
 
         <StackPanel VerticalAlignment="Top" Height="320" Margin="10,57,16,0">
 
-            <DataGrid x:Name="DgTickets"  Width="732" Height="252" AutoGenerateColumns="True" />
+            <DataGrid x:Name="DgTickets"  MouseDoubleClick="DgTickets_MouseDoubleClick" Width="732" Height="252" AutoGenerateColumns="True" />
 
             <Button x:Name="BtnFrmRefresh" Content="Refresh" Margin="10,20,10,0" Background="LightBlue"  Width="281" Click="BtnFrmRefresh_Click" />
 

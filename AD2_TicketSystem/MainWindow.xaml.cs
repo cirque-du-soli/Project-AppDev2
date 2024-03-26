@@ -49,6 +49,21 @@ namespace AD2_TicketSystem
         {
             NewTicket addTicket = new NewTicket();
             addTicket.ShowDialog();
+            LoadData();
+        }
+
+        
+
+        private void DgTickets_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (DgTickets.SelectedItem != null)
+            {
+                DataRowView row = (DataRowView)DgTickets.SelectedItem;
+                int ticketId = Convert.ToInt32(row["ID"]);
+                EditTicket editTicket = new EditTicket(ticketId);
+                editTicket.ShowDialog();
+                LoadData();
+            }
         }
     }
 }

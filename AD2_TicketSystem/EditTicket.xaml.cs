@@ -12,18 +12,21 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Data.SqlClient;
+using System.Xml.Linq;
 
 namespace AD2_TicketSystem
 {
     /// <summary>
     /// Interaction logic for NewTicket.xaml
     /// </summary>
-    public partial class NewTicket : Window
+    public partial class EditTicket : Window
     {
-        public NewTicket()
+        public int ticketId;
+        public EditTicket(int ticketId)
         {
             InitializeComponent();
-            
+            this.ticketId = ticketId;
+            LoadTicketDetails(ticketId);
         }
 
         SqlConnection conn = new SqlConnection(@"Data Source=LAPTOP-C7TQR79C;Initial Catalog=TicketDb;Integrated Security=True;Encrypt=False");
@@ -38,6 +41,39 @@ namespace AD2_TicketSystem
             CbxDepartment.Items.Add("IT");
         }
 
+        private void LoadTicketDetails(int studentId)
+        {
+            
+                try
+                {
+                    
+                    string query = @"SELECT Department, Subject, RegDate, Details FROM Tickets WHERE ID= @Id";
+                    conn.Open();
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@Id", ticketId);
+                        SqlDataReader reader = cmd.ExecuteReader();
+
+                        if (reader.Read())
+                        {
+                            CbxDepartment.SelectedValue = reader["Department"].ToString();
+                            TbxSubject.Text = reader["Subject"].ToString();
+                            
+                           
+                            TbxRegDatePicker.SelectedDate = Convert.ToDateTime(reader["RegDate"]);
+                           
+                            TbxMessageDetails.Text = reader["Details"] != DBNull.Value ? reader["Details"].ToString() : "";
+                        }
+                        reader.Close();
+                    }
+                    conn.Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("An error occurred: " + ex.Message);
+                }
+            
+        }
 
         private void ClearFields()
         {
@@ -82,23 +118,25 @@ namespace AD2_TicketSystem
             return true;
         }
 
-        private void BtnAddTicket_Click(object sender, RoutedEventArgs e)
+        private void BtnEditTicket_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 if (IsValid())
                 {
-                    SqlCommand cmd = new SqlCommand("INSERT INTO Tickets (Department, Subject, RegDate, Details) VALUES (@department, @subject,  CONVERT(date, @regDate), @details);", conn);
+                    
+                    SqlCommand cmd = new SqlCommand("UPDATE Tickets SET Department = @department, Subject = @subject, RegDate = @regDate, Details=@message WHERE ID = @Id;", conn);
                     cmd.CommandType = System.Data.CommandType.Text;
                     cmd.Parameters.AddWithValue("@department", CbxDepartment.SelectedItem.ToString());
                     cmd.Parameters.AddWithValue("@subject", TbxSubject.Text);
                     cmd.Parameters.AddWithValue("@regDate", TbxRegDatePicker.SelectedDate);
-                    cmd.Parameters.AddWithValue("@details", TbxMessageDetails.Text );
+                    cmd.Parameters.AddWithValue("@message", TbxMessageDetails.Text );
+                    cmd.Parameters.AddWithValue("@Id", ticketId);
                     conn.Open();
                     cmd.ExecuteNonQuery();
                     conn.Close();
-                    MessageBox.Show("Successfully Ticket Added");
-                    ClearFields();
+                    MessageBox.Show("Ticket Updated Successfully");
+                    this.Close();
 
                 }
             }catch (SqlException ex)
