@@ -22,7 +22,8 @@ namespace AD2_TicketSystem
     /// </summary>
     public partial class MainWindow : Window
     {
-        SqlConnection conn = new SqlConnection(@"Data Source=LAPTOP-C7TQR79C;Initial Catalog=TicketDb;Integrated Security=True;Encrypt=False");
+        //SqlConnection conn = new SqlConnection(@"Data Source=LAPTOP-C7TQR79C;Initial Catalog=TicketDb;Integrated Security=True;Encrypt=False");
+        SqlConnection conn = new SqlConnection(@"Data Source=localhost\SQLEXPRESS01;Initial Catalog=TicketDb;Trusted_Connection=True;Integrated Security=True;Encrypt=False");
         public MainWindow()
         {
             InitializeComponent();
